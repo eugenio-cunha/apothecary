@@ -6,7 +6,6 @@ import (
 	"os"
 	"time"
 
-	"github.com/chromedp/cdproto/target"
 	"github.com/chromedp/chromedp"
 )
 
@@ -45,10 +44,7 @@ func main() {
 
 	sent := 0
 	for {
-		targets, err := chromedp.Targets(ctx)
-		checkErr(err)
-		if countTabs(targets) < 10 {
-
+		if countTabs(ctx) < 10 {
 			tab := newTab(ctx)
 			go fillForm(tab)
 			sent++
@@ -97,7 +93,9 @@ func fillForm(tab Tab) {
 }
 
 // countTabs conta quantas abas foram abertas no google chrome
-func countTabs(targets []*target.Info) int {
+func countTabs(ctx context.Context) int {
+	targets, err := chromedp.Targets(ctx)
+	checkErr(err)
 	result := 0
 	for _, t := range targets {
 		if t.Type == "page" {
